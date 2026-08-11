@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Refined Enterprise Styling: Softer Metric Weights, Clean Card Borders, and Dark Navy (#00075D) Harmony
+# Custom Styling: Pill-Style Separated Tabs, Dark Navy Blue (#00075D) Theme, Clean Aesthetics
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -72,14 +72,14 @@ st.markdown("""
         color: white !important; 
     }
     
-    /* Refined Metric Cards: Lighter font weight, subtle shadow, elegant aesthetic */
+    /* Refined Metric Cards */
     div[data-testid="stMetric"] {
         background-color: #ffffff; 
         padding: 22px; 
         border-radius: 10px; 
         border: 1px solid #e2e8f0; 
         border-top: 4px solid #00075D; 
-        box-shadow: 0 4px 12px rgba(0, 7, 93, 0.04);
+        box-shadow: 0 4px 12px rgba(0,7,93,0.04);
     }
     div[data-testid="stMetricLabel"] { 
         font-size: 15px !important; 
@@ -90,20 +90,40 @@ st.markdown("""
     div[data-testid="stMetricValue"] { 
         font-size: 26px !important; 
         color: #00075D !important; 
-        font-weight: 600 !important; /* Replaced heavy chunky bold with clean semi-bold */
+        font-weight: 600 !important; 
     }
 
-    /* Tab Label Typography Unified with Dark Navy Blue Accent */
+    /* Modern Pill / Card Tab Separation to prevent them from feeling mixed together */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 12px !important;
+        background-color: #f1f5f9;
+        padding: 10px;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 48px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        padding: 0 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
     .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-        color: #00075D !important; 
-        border-bottom-color: #00075D !important; 
+        background-color: #00075D !important;
+        color: #ffffff !important;
+        border-color: #00075D !important;
         font-weight: 700;
         font-size: 18px !important;
     }
-    .stTabs [data-baseweb="tab-list"] button {
-        font-size: 18px !important;
-        font-weight: 600 !important;
+    .stTabs [data-baseweb="tab-list"] button[aria-selected="false"] {
         color: #475569 !important;
+        font-weight: 600;
+        font-size: 18px !important;
+    }
+    .stTabs [data-baseweb="tab-list"] button[aria-selected="false"]:hover {
+        background-color: #e2e8f0 !important;
+        color: #0f172a !important;
     }
     
     /* Dataframe Table Text Scaling */
@@ -173,7 +193,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Navigation Tabs
+# Navigation Tabs (Now styled as clean, separated cards/pills)
 tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database & CRM Upload", "Partner Ecosystem & Strategy"])
 
 with tab1:
