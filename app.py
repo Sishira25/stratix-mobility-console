@@ -4,11 +4,11 @@ import pandas as pd
 # Page Configuration
 st.set_page_config(
     page_title="Stratix | Enterprise Mobility & GTM Intelligence Console",
-    page_icon="⚡",
+    page_icon="",
     layout="wide"
 )
 
-# Custom Styling with Dark Navy Blue (#00075D) Banner, Pure White Text, and Unified Colors
+# Refined Enterprise Styling: Softer Metric Weights, Clean Card Borders, and Dark Navy (#00075D) Harmony
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -19,7 +19,7 @@ st.markdown("""
         color: #1e293b !important;
     }
     
-    /* Custom Header Banner Styling with Exact Dark Navy Blue (#00075D) and Matching Left Border */
+    /* Custom Header Banner Styling with Exact Dark Navy Blue (#00075D) */
     .stratix-header {
         background-color: #00075D;
         padding: 2.5rem 3rem;
@@ -72,17 +72,26 @@ st.markdown("""
         color: white !important; 
     }
     
-    /* Metric Cards Overhaul with Unified Dark Navy Blue Accent */
+    /* Refined Metric Cards: Lighter font weight, subtle shadow, elegant aesthetic */
     div[data-testid="stMetric"] {
         background-color: #ffffff; 
-        padding: 20px; 
-        border-radius: 8px; 
+        padding: 22px; 
+        border-radius: 10px; 
         border: 1px solid #e2e8f0; 
         border-top: 4px solid #00075D; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        box-shadow: 0 4px 12px rgba(0, 7, 93, 0.04);
     }
-    div[data-testid="stMetricLabel"] { font-size: 16px !important; color: #475569 !important; font-weight: 600 !important; }
-    div[data-testid="stMetricValue"] { font-size: 28px !important; color: #0f172a !important; font-weight: 700 !important; }
+    div[data-testid="stMetricLabel"] { 
+        font-size: 15px !important; 
+        color: #64748b !important; 
+        font-weight: 600 !important; 
+        letter-spacing: 0.3px;
+    }
+    div[data-testid="stMetricValue"] { 
+        font-size: 26px !important; 
+        color: #00075D !important; 
+        font-weight: 600 !important; /* Replaced heavy chunky bold with clean semi-bold */
+    }
 
     /* Tab Label Typography Unified with Dark Navy Blue Accent */
     .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
@@ -156,21 +165,21 @@ if 'db_data' not in st.session_state:
 
 df_db = pd.DataFrame(st.session_state.db_data)
 
-# Header Banner with exact Dark Navy Blue (#00075D) and matching left border
+# Header Banner
 st.markdown("""
     <div class="stratix-header">
-        <h1>⚡ Stratix</h1>
+        <h1>Stratix</h1>
         <p>Enterprise Mobility & GTM Intelligence Console</p>
     </div>
 """, unsafe_allow_html=True)
 
 # Navigation Tabs
-tab1, tab2, tab3 = st.tabs(["🔍 Account Intelligence & Outreach", "📊 Master Database & CRM Upload", "⚙️ Partner Ecosystem & Strategy"])
+tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database & CRM Upload", "Partner Ecosystem & Strategy"])
 
 with tab1:
     st.subheader("Target Account Pipeline & Instant Lookup")
     
-    search_input = st.text_input("🔍 Type any target company name (e.g., 'Siemens', 'Adidas'):", "")
+    search_input = st.text_input("Type any target company name (e.g., 'Siemens', 'Adidas'):", "")
     
     col_f1, col_f2 = st.columns(2)
     with col_f1:
@@ -219,8 +228,8 @@ with tab1:
     col_strat1, col_strat2 = st.columns(2)
     with col_strat1:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">🎯 Recommended GTM Strategy</h3>
+            <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%; box-shadow: 0 4px 12px rgba(0,7,93,0.04);">
+                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">Recommended GTM Strategy</h3>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Optimal Framework:</b><br>{account_row['Optimal_Strategy']}</p>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Corporate Domain:</b> <code>{account_row['Domain']}</code></p>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Current MDM Integration:</b> <code>{account_row['Current_MDM']}</code></p>
@@ -231,8 +240,8 @@ with tab1:
         
     with col_strat2:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">✉️ Tailored B2B Sales Outreach Email</h3>
+            <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%; box-shadow: 0 4px 12px rgba(0,7,93,0.04);">
+                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">Tailored B2B Sales Outreach Email</h3>
         """, unsafe_allow_html=True)
         
         realistic_pitch = (
@@ -251,9 +260,9 @@ with tab1:
         st.markdown("</div>", unsafe_allow_html=True)
 
 with tab2:
-    st.subheader("🗄️ Master Enterprise Database & CRM Ingestion")
+    st.subheader("Master Enterprise Database & CRM Ingestion")
     
-    st.markdown("### 📁 Salesforce / HubSpot CRM Export Ingestion")
+    st.markdown("### Salesforce / HubSpot CRM Export Ingestion")
     uploaded_file = st.file_uploader("Drop your CRM account export (.csv or .xlsx) here", type=["csv", "xlsx"])
     if uploaded_file is not None:
         try:
@@ -288,7 +297,7 @@ with tab2:
     display_df = df_db[df_db['Company'].str.contains(db_search, case=False)] if db_search else df_db
     st.dataframe(display_df, use_container_width=True)
     
-    st.markdown("### ➕ Append Single Target Account")
+    st.markdown("### Append Single Target Account")
     with st.form("add_account_form"):
         c_name = st.text_input("Company Name")
         c_dom = st.text_input("Domain")
@@ -307,7 +316,7 @@ with tab2:
             st.success(f"Successfully recorded {c_name} into pipeline database.")
 
 with tab3:
-    st.subheader("⚙️ Enterprise Ecosystem & Strategic Parameters")
+    st.subheader("Enterprise Ecosystem & Strategic Parameters")
     eco1, eco2 = st.columns(2)
     with eco1:
         st.markdown("**Supported Hardware Partners:**\n- Samsung Knox\n- Apple iOS Enterprise\n- Lenovo & Microsoft Surface")
