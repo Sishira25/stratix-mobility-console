@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling: Pill-Style Separated Tabs, Dark Navy Blue (#00075D) Theme, Clean Aesthetics
+# Custom Styling: Enterprise Sidebar, Pill Tabs, Dark Navy Blue (#00075D) Theme
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -46,7 +46,7 @@ st.markdown("""
     h3 { font-size: 20px !important; color: #0f172a !important; font-weight: 700; }
     
     /* Form Labels and Inputs */
-    label, .stTextInput label, .stSelectbox label, .stNumberInput label, .stFileUploader label {
+    label, .stTextInput label, .stSelectbox label, .stNumberInput label, .stFileUploader label, .stSlider label {
         font-size: 18px !important;
         font-weight: 600 !important;
         color: #0f172a !important;
@@ -93,7 +93,7 @@ st.markdown("""
         font-weight: 600 !important; 
     }
 
-    /* Modern Pill / Card Tab Separation to prevent them from feeling mixed together */
+    /* Modern Pill / Card Tab Separation */
     .stTabs [data-baseweb="tab-list"] {
         gap: 12px !important;
         background-color: #f1f5f9;
@@ -185,6 +185,28 @@ if 'db_data' not in st.session_state:
 
 df_db = pd.DataFrame(st.session_state.db_data)
 
+# --- SIDEBAR CONTROL PANEL ---
+with st.sidebar:
+    st.markdown("### Workspace Controls")
+    st.markdown("Configure global parameters and account filtering rules.")
+    
+    # Global Device Density Modifier Slider
+    global_density_modifier = st.slider(
+        "Global Device Density Ratio", 
+        min_value=0.10, 
+        max_value=1.00, 
+        value=0.50, 
+        step=0.05,
+        help="Adjusts the baseline mobile penetration rate across enterprise headcounts."
+    )
+    
+    st.markdown("---")
+    st.markdown("### Quick Navigation")
+    sidebar_industry_filter = st.selectbox("Quick Filter Industry", ["All"] + sorted(df_db["Industry"].unique().tolist()))
+    
+    st.markdown("---")
+    st.markdown("**Stratix Console v2.4**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
+
 # Header Banner
 st.markdown("""
     <div class="stratix-header">
@@ -193,7 +215,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Navigation Tabs (Now styled as clean, separated cards/pills)
+# Navigation Tabs (Pill-styled & cleanly separated)
 tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database & CRM Upload", "Partner Ecosystem & Strategy"])
 
 with tab1:
@@ -203,7 +225,10 @@ with tab1:
     
     col_f1, col_f2 = st.columns(2)
     with col_f1:
-        selected_industry = st.selectbox("Filter by Industry Vertical", ["All"] + sorted(df_db["Industry"].unique().tolist()))
+        # Respect sidebar industry filter if set, otherwise use main selectbox
+        industry_options = ["All"] + sorted(df_db["Industry"].unique().tolist())
+        default_ind_idx = industry_options.index(sidebar_industry_filter) if sidebar_industry_filter in industry_options else 0
+        selected_industry = st.selectbox("Filter by Industry Vertical", industry_options, index=default_ind_idx)
     
     filtered_df = df_db if selected_industry == "All" else df_db[df_db["Industry"] == selected_industry]
     
@@ -215,7 +240,9 @@ with tab1:
     match = df_db[df_db["Company"].str.lower() == target_name.lower()]
     
     if not match.empty:
-        account_row = match.iloc[0]
+        account_row = match.iloc[0].copy()
+        # Override density with sidebar custom global slider if desired, or keep default
+        account_row["Device_Density"] = global_density_modifier
     else:
         account_row = {
             "Company": target_name,
@@ -223,7 +250,7 @@ with tab1:
             "Industry": selected_industry if selected_industry != "All" else "Manufacturing/Enterprise",
             "Employees": 2500,
             "Current_MDM": "Microsoft Intune",
-            "Device_Density": 0.50,
+            "Device_Density": global_density_modifier,
             "Legacy_Lockin": True,
             "Estimated_Contract_Value": "€120,000/yr",
             "Optimal_Strategy": "Automated Fleet Migration (AFM) via BARB & Zero-Touch Deployment",
@@ -277,11 +304,26 @@ with tab1:
             f"[Your Name] | Enterprise Business Development"
         )
         st.code(realistic_pitch, language="text")
+        
+        # Download button for the sales pitch
+        st.download_button(
+            label="Download Pitch as Text File",
+            data=realistic_pitch,
+            file_name=f"{account_row['Company'].lower().replace(' ', '_')}_pitch.txt",
+            mime="text/plain"
+        )
         st.markdown("</div>", unsafe_allow_html=True)
 
 with tab2:
     st.subheader("Master Enterprise Database & CRM Ingestion")
     
+    col_db_metrics1, col_db_metrics2 = st.columns(2)
+    with col_db_metrics1:
+        st.metric("Total Indexed Accounts", len(df_db))
+    with col_db_metrics2:
+        st.metric("Industries Covered", df_db["Industry"].nunique())
+        
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("### Salesforce / HubSpot CRM Export Ingestion")
     uploaded_file = st.file_uploader("Drop your CRM account export (.csv or .xlsx) here", type=["csv", "xlsx"])
     if uploaded_file is not None:
@@ -317,6 +359,13 @@ with tab2:
     display_df = df_db[df_db['Company'].str.contains(db_search, case=False)] if db_search else df_db
     st.dataframe(display_df, use_container_width=True)
     
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("### Pipeline Analytics by Industry")
+    # Quick visual breakdown chart of employee headcounts per industry
+    industry_summary = df_db.groupby("Industry")["Employees"].sum().reset_index()
+    st.bar_chart(industry_summary.set_index("Industry"))
+    
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("### Append Single Target Account")
     with st.form("add_account_form"):
         c_name = st.text_input("Company Name")
