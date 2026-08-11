@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling with Dark Midnight Banner, Pure White Text, and Unified Banner-Colored Buttons
+# Custom Styling with Dark Navy Blue (#00075D) Banner, Pure White Text, and Unified Colors
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -19,17 +19,14 @@ st.markdown("""
         color: #1e293b !important;
     }
     
-    /* Custom Header Banner Styling matching the exact midnight blue gradient with pure white text */
+    /* Custom Header Banner Styling with Exact Dark Navy Blue (#00075D) and Matching Left Border */
     .stratix-header {
-        background: linear-gradient(135deg, #070e1c 0%, #0b1736 50%, #061129 100%);
+        background-color: #00075D;
         padding: 2.5rem 3rem;
         border-radius: 10px;
         margin-bottom: 2rem;
-        box-shadow: 0 8px 24px rgba(7, 14, 28, 0.35);
-        border-left: 6px solid #3b82f6;
-        border-top: 1px solid rgba(59, 130, 246, 0.2);
-        border-right: 1px solid rgba(59, 130, 246, 0.2);
-        border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        box-shadow: 0 8px 24px rgba(0, 7, 93, 0.25);
+        border-left: 6px solid #00075D;
     }
     .stratix-header h1 { 
         color: #ffffff !important; 
@@ -58,40 +55,39 @@ st.markdown("""
         font-size: 18px !important;
     }
     
-    /* Primary Action Buttons Unified with Banner Color (#0b1736) */
+    /* Primary Action Buttons Unified with Exact Dark Navy Blue (#00075D) */
     .stButton>button {
-        background: linear-gradient(135deg, #070e1c 0%, #0b1736 50%, #061129 100%) !important; 
+        background-color: #00075D !important; 
         color: white !important; 
         border-radius: 6px; 
         font-weight: 600; 
         font-size: 18px !important;
-        border: 1px solid rgba(59, 130, 246, 0.3); 
+        border: none; 
         padding: 0.8rem 1.4rem; 
         width: 100%; 
-        box-shadow: 0 4px 12px rgba(7, 14, 28, 0.25);
+        box-shadow: 0 4px 12px rgba(0, 7, 93, 0.2);
     }
     .stButton>button:hover { 
-        background: linear-gradient(135deg, #0b1736 0%, #0f2252 50%, #0b1736 100%) !important; 
+        background-color: #000542 !important; 
         color: white !important; 
-        border-color: #3b82f6;
     }
     
-    /* Metric Cards Overhaul with Unified Banner Accent */
+    /* Metric Cards Overhaul with Unified Dark Navy Blue Accent */
     div[data-testid="stMetric"] {
         background-color: #ffffff; 
         padding: 20px; 
         border-radius: 8px; 
         border: 1px solid #e2e8f0; 
-        border-top: 4px solid #0b1736; 
+        border-top: 4px solid #00075D; 
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
     div[data-testid="stMetricLabel"] { font-size: 16px !important; color: #475569 !important; font-weight: 600 !important; }
     div[data-testid="stMetricValue"] { font-size: 28px !important; color: #0f172a !important; font-weight: 700 !important; }
 
-    /* Tab Label Typography Unified with Banner Accent */
+    /* Tab Label Typography Unified with Dark Navy Blue Accent */
     .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-        color: #0b1736 !important; 
-        border-bottom-color: #0b1736 !important; 
+        color: #00075D !important; 
+        border-bottom-color: #00075D !important; 
         font-weight: 700;
         font-size: 18px !important;
     }
@@ -160,7 +156,7 @@ if 'db_data' not in st.session_state:
 
 df_db = pd.DataFrame(st.session_state.db_data)
 
-# Header Banner with pure white text matching the midnight blue gradient
+# Header Banner with exact Dark Navy Blue (#00075D) and matching left border
 st.markdown("""
     <div class="stratix-header">
         <h1>⚡ Stratix</h1>
@@ -223,7 +219,7 @@ with tab1:
     col_strat1, col_strat2 = st.columns(2)
     with col_strat1:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #0b1736; height: 100%;">
+            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
                 <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">🎯 Recommended GTM Strategy</h3>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Optimal Framework:</b><br>{account_row['Optimal_Strategy']}</p>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Corporate Domain:</b> <code>{account_row['Domain']}</code></p>
@@ -235,7 +231,7 @@ with tab1:
         
     with col_strat2:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #0b1736; height: 100%;">
+            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
                 <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">✉️ Tailored B2B Sales Outreach Email</h3>
         """, unsafe_allow_html=True)
         
