@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling with Dark Midnight Banner and Complementary Lighter Navy/Slate Accents
+# Custom Styling with Dark Midnight Banner, Pure White Text, and Unified Banner-Colored Buttons
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -58,39 +58,40 @@ st.markdown("""
         font-size: 18px !important;
     }
     
-    /* Complementary Lighter Blue Accent Action Buttons */
+    /* Primary Action Buttons Unified with Banner Color (#0b1736) */
     .stButton>button {
-        background-color: #2563eb !important; 
+        background: linear-gradient(135deg, #070e1c 0%, #0b1736 50%, #061129 100%) !important; 
         color: white !important; 
         border-radius: 6px; 
         font-weight: 600; 
         font-size: 18px !important;
-        border: none; 
+        border: 1px solid rgba(59, 130, 246, 0.3); 
         padding: 0.8rem 1.4rem; 
         width: 100%; 
-        box-shadow: 0 2px 4px rgba(37,99,235,0.2);
+        box-shadow: 0 4px 12px rgba(7, 14, 28, 0.25);
     }
     .stButton>button:hover { 
-        background-color: #1d4ed8 !important; 
+        background: linear-gradient(135deg, #0b1736 0%, #0f2252 50%, #0b1736 100%) !important; 
         color: white !important; 
+        border-color: #3b82f6;
     }
     
-    /* Metric Cards Overhaul with Lighter Complementary Blue Accent */
+    /* Metric Cards Overhaul with Unified Banner Accent */
     div[data-testid="stMetric"] {
         background-color: #ffffff; 
         padding: 20px; 
         border-radius: 8px; 
         border: 1px solid #e2e8f0; 
-        border-top: 4px solid #3b82f6; 
+        border-top: 4px solid #0b1736; 
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
     div[data-testid="stMetricLabel"] { font-size: 16px !important; color: #475569 !important; font-weight: 600 !important; }
     div[data-testid="stMetricValue"] { font-size: 28px !important; color: #0f172a !important; font-weight: 700 !important; }
 
-    /* Tab Label Typography with Complementary Lighter Blue Accent */
+    /* Tab Label Typography Unified with Banner Accent */
     .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-        color: #2563eb !important; 
-        border-bottom-color: #2563eb !important; 
+        color: #0b1736 !important; 
+        border-bottom-color: #0b1736 !important; 
         font-weight: 700;
         font-size: 18px !important;
     }
@@ -222,7 +223,7 @@ with tab1:
     col_strat1, col_strat2 = st.columns(2)
     with col_strat1:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #3b82f6; height: 100%;">
+            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #0b1736; height: 100%;">
                 <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">🎯 Recommended GTM Strategy</h3>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Optimal Framework:</b><br>{account_row['Optimal_Strategy']}</p>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Corporate Domain:</b> <code>{account_row['Domain']}</code></p>
@@ -234,7 +235,7 @@ with tab1:
         
     with col_strat2:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #3b82f6; height: 100%;">
+            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #0b1736; height: 100%;">
                 <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">✉️ Tailored B2B Sales Outreach Email</h3>
         """, unsafe_allow_html=True)
         
