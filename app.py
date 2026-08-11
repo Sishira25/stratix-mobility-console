@@ -190,7 +190,6 @@ with st.sidebar:
     st.markdown("### Workspace Controls")
     st.markdown("Configure global parameters and account filtering rules.")
     
-    # Global Device Density Modifier Slider
     global_density_modifier = st.slider(
         "Global Device Density Ratio", 
         min_value=0.10, 
@@ -356,7 +355,6 @@ with tab2:
     display_df = df_db[df_db['Company'].str.contains(db_search, case=False)] if db_search else df_db
     st.dataframe(display_df, use_container_width=True)
     
-    # Download Button for Master Database / Filtered Data
     csv_data = display_df.to_csv(index=False).encode('utf-8')
     st.download_button(
         label="Download Filtered Pipeline Database as CSV",
@@ -484,8 +482,11 @@ with tab3:
 
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Export button for partner playbook summary
-    partner_playbook_text = f"STRATIX PARTNER ECOSYSTEM PLAYBOOK\nEcosystem Focus: {selected_partner}\nCompliance: ISO 27001 Certified, GDPR & NIS-2 Compliant, Blancco Data Erasure Audit Trail."
+    partner_playbook_text = (
+        f"STRATIX PARTNER ECOSYSTEM PLAYBOOK\n"
+        f"Ecosystem Focus: {selected_partner}\n"
+        f"Compliance Framework: ISO 27001 Certified, GDPR & NIS-2 Compliant, Blancco Data Erasure Audit Trail."
+    )
     st.download_button(
         label="Download Selected Partner Playbook (.txt)",
         data=partner_playbook_text,
