@@ -205,7 +205,7 @@ with st.sidebar:
     sidebar_industry_filter = st.selectbox("Quick Filter Industry", ["All"] + sorted(df_db["Industry"].unique().tolist()))
     
     st.markdown("---")
-    st.markdown("**Stratix Console v2.4**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
+    st.markdown("**Stratix Console v2.5**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
 
 # Header Banner
 st.markdown("""
@@ -215,7 +215,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Navigation Tabs (Pill-styled & cleanly separated)
+# Navigation Tabs
 tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database & CRM Upload", "Partner Ecosystem & Strategy"])
 
 with tab1:
@@ -225,7 +225,6 @@ with tab1:
     
     col_f1, col_f2 = st.columns(2)
     with col_f1:
-        # Respect sidebar industry filter if set, otherwise use main selectbox
         industry_options = ["All"] + sorted(df_db["Industry"].unique().tolist())
         default_ind_idx = industry_options.index(sidebar_industry_filter) if sidebar_industry_filter in industry_options else 0
         selected_industry = st.selectbox("Filter by Industry Vertical", industry_options, index=default_ind_idx)
@@ -241,7 +240,6 @@ with tab1:
     
     if not match.empty:
         account_row = match.iloc[0].copy()
-        # Override density with sidebar custom global slider if desired, or keep default
         account_row["Device_Density"] = global_density_modifier
     else:
         account_row = {
@@ -305,7 +303,6 @@ with tab1:
         )
         st.code(realistic_pitch, language="text")
         
-        # Download button for the sales pitch
         st.download_button(
             label="Download Pitch as Text File",
             data=realistic_pitch,
@@ -359,9 +356,17 @@ with tab2:
     display_df = df_db[df_db['Company'].str.contains(db_search, case=False)] if db_search else df_db
     st.dataframe(display_df, use_container_width=True)
     
+    # Download Button for Master Database / Filtered Data
+    csv_data = display_df.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="Download Filtered Pipeline Database as CSV",
+        data=csv_data,
+        file_name="stratix_pipeline_export.csv",
+        mime="text/csv"
+    )
+    
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("### Pipeline Analytics by Industry")
-    # Quick visual breakdown chart of employee headcounts per industry
     industry_summary = df_db.groupby("Industry")["Employees"].sum().reset_index()
     st.bar_chart(industry_summary.set_index("Industry"))
     
@@ -385,9 +390,105 @@ with tab2:
             st.success(f"Successfully recorded {c_name} into pipeline database.")
 
 with tab3:
-    st.subheader("Enterprise Ecosystem & Strategic Parameters")
-    eco1, eco2 = st.columns(2)
-    with eco1:
-        st.markdown("**Supported Hardware Partners:**\n- Samsung Knox\n- Apple iOS Enterprise\n- Lenovo & Microsoft Surface")
-    with eco2:
-        st.markdown("**Compliance & Security Standards:**\n- ISO 27001 Certified\n- GDPR & NIS-2 Compliant\n- Blancco Data Erasure Audit Trail")
+    st.subheader("Enterprise Ecosystem & Strategic Playbooks")
+    st.markdown("Select a hardware or security partner ecosystem below to view specific channel margins, integration specs, and co-selling frameworks.")
+    
+    selected_partner = st.selectbox(
+        "Select Ecosystem Partner",
+        ["Samsung Knox & Enterprise", "Apple iOS & DEP Deployment", "Zebra Technologies (Ruggedized)", "Microsoft Surface & Intune Stack"]
+    )
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    col_p1, col_p2 = st.columns(2)
+    
+    if selected_partner == "Samsung Knox & Enterprise":
+        with col_p1:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Knox Integration & Staging</h3>
+                    <p><b>Deployment Method:</b> Knox Mobile Enrollment (KME)</p>
+                    <p><b>Security Tier:</b> Hardware-backed root of trust with Knox Guard isolation.</p>
+                    <p><b>Target Vertical:</b> Manufacturing, Logistics, Field Healthcare.</p>
+                </div>
+            """, unsafe_allow_html=True)
+        with col_p2:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Commercial & Channel Incentives</h3>
+                    <p><b>Partner Margin Tier:</b> Tier 1 Authorized DaaS Distributor</p>
+                    <p><b>Buy-and-Rent-Back Eligibility:</b> Full residual value guarantee on Galaxy Enterprise Editions.</p>
+                    <p><b>Data Wipe Certification:</b> Integrated Blancco automated audit logging.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+    elif selected_partner == "Apple iOS & DEP Deployment":
+        with col_p1:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Apple Ecosystem & DEP Setup</h3>
+                    <p><b>Deployment Method:</b> Automated Device Enrollment via Apple Business Manager (ABM).</p>
+                    <p><b>Security Tier:</b> Supervised mode, mandatory MDM profile retention.</p>
+                    <p><b>Target Vertical:</b> Finance, Tech/SaaS, Professional Services.</p>
+                </div>
+            """, unsafe_allow_html=True)
+        with col_p2:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Commercial & Channel Incentives</h3>
+                    <p><b>Partner Margin Tier:</b> Apple Authorized Enterprise Reseller (AAER)</p>
+                    <p><b>Buy-and-Rent-Back Eligibility:</b> High resale valuation retention across iPhone & iPad Pro portfolios.</p>
+                    <p><b>Lifecycle Option:</b> 24-month upgrade cycles with zero-touch swap logistics.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+    elif selected_partner == "Zebra Technologies (Ruggedized)":
+        with col_p1:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Ruggedized Handheld Staging</h3>
+                    <p><b>Deployment Method:</b> StageNow Enterprise Barcode Provisioning.</p>
+                    <p><b>Security Tier:</b> Enterprise Mobility Security Suite with LifeGuard OTA updates.</p>
+                    <p><b>Target Vertical:</b> Warehousing, Freight Logistics, Omnichannel Retail.</p>
+                </div>
+            """, unsafe_allow_html=True)
+        with col_p2:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Commercial & Channel Incentives</h3>
+                    <p><b>Partner Margin Tier:</b> Zebra Premier Solution Partner</p>
+                    <p><b>Buy-and-Rent-Back Eligibility:</b> Heavy-duty asset lifecycle structuring for multi-year warehouse contracts.</p>
+                    <p><b>Swap Logistics:</b> 24-hour advance replacement SLA for broken barcode terminals.</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+    else:
+        with col_p1:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Microsoft Surface & Intune Integration</h3>
+                    <p><b>Deployment Method:</b> Windows Autopilot native cloud enrollment.</p>
+                    <p><b>Security Tier:</b> Microsoft Entra ID (Azure AD) conditional access policies.</p>
+                    <p><b>Target Vertical:</b> Corporate Headquarters, Public Sector, Enterprise IT.</p>
+                </div>
+            """, unsafe_allow_html=True)
+        with col_p2:
+            st.markdown("""
+                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
+                    <h3>Commercial & Channel Incentives</h3>
+                    <p><b>Partner Margin Tier:</b> Microsoft Cloud Solution Provider (CSP)</p>
+                    <p><b>Buy-and-Rent-Back Eligibility:</b> Balance sheet capitalization relief for laptop & tablet fleets.</p>
+                    <p><b>Compliance:</b> ISO 27001 & BSI-compliant secure workspace provisioning.</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Export button for partner playbook summary
+    partner_playbook_text = f"STRATIX PARTNER ECOSYSTEM PLAYBOOK\nEcosystem Focus: {selected_partner}\nCompliance: ISO 27001 Certified, GDPR & NIS-2 Compliant, Blancco Data Erasure Audit Trail."
+    st.download_button(
+        label="Download Selected Partner Playbook (.txt)",
+        data=partner_playbook_text,
+        file_name=f"{selected_partner.lower().replace(' ', '_')}_playbook.txt",
+        mime="text/plain"
+    )
