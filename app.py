@@ -8,7 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling with Dark Midnight Banner and Complementary Muted, Sophisticated Tones
+# Custom Styling with Dark Midnight Banner and Complementary Lighter Navy/Slate Accents
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -19,18 +19,17 @@ st.markdown("""
         color: #1e293b !important;
     }
     
-    /* Custom Header Banner Styling matching the exact midnight blue gradient */
+    /* Custom Header Banner Styling matching the exact midnight blue gradient with pure white text */
     .stratix-header {
         background: linear-gradient(135deg, #070e1c 0%, #0b1736 50%, #061129 100%);
         padding: 2.5rem 3rem;
         border-radius: 10px;
-        color: white;
         margin-bottom: 2rem;
         box-shadow: 0 8px 24px rgba(7, 14, 28, 0.35);
-        border-left: 6px solid #334155;
-        border-top: 1px solid rgba(51, 65, 85, 0.3);
-        border-right: 1px solid rgba(51, 65, 85, 0.3);
-        border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        border-left: 6px solid #3b82f6;
+        border-top: 1px solid rgba(59, 130, 246, 0.2);
+        border-right: 1px solid rgba(59, 130, 246, 0.2);
+        border-bottom: 1px solid rgba(59, 130, 246, 0.2);
     }
     .stratix-header h1 { 
         color: #ffffff !important; 
@@ -39,9 +38,10 @@ st.markdown("""
         margin-bottom: 8px !important; 
     }
     .stratix-header p { 
-        color: #94a3b8 !important; 
+        color: #ffffff !important; 
         font-size: 19px !important; 
         margin: 0px !important; 
+        opacity: 0.9;
     }
     
     /* Section & Subheader Scaling */
@@ -58,9 +58,9 @@ st.markdown("""
         font-size: 18px !important;
     }
     
-    /* Complementary Slate-Navy Action Buttons */
+    /* Complementary Lighter Blue Accent Action Buttons */
     .stButton>button {
-        background-color: #1e293b !important; 
+        background-color: #2563eb !important; 
         color: white !important; 
         border-radius: 6px; 
         font-weight: 600; 
@@ -68,29 +68,29 @@ st.markdown("""
         border: none; 
         padding: 0.8rem 1.4rem; 
         width: 100%; 
-        box-shadow: 0 2px 4px rgba(30,41,59,0.2);
+        box-shadow: 0 2px 4px rgba(37,99,235,0.2);
     }
     .stButton>button:hover { 
-        background-color: #0f172a !important; 
+        background-color: #1d4ed8 !important; 
         color: white !important; 
     }
     
-    /* Metric Cards Overhaul with Slate Accent */
+    /* Metric Cards Overhaul with Lighter Complementary Blue Accent */
     div[data-testid="stMetric"] {
         background-color: #ffffff; 
         padding: 20px; 
         border-radius: 8px; 
         border: 1px solid #e2e8f0; 
-        border-top: 4px solid #334155; 
+        border-top: 4px solid #3b82f6; 
         box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-    div[data-testid="stMetricLabel"] { font-size: 16px !important; color: #64748b !important; font-weight: 600 !important; }
+    div[data-testid="stMetricLabel"] { font-size: 16px !important; color: #475569 !important; font-weight: 600 !important; }
     div[data-testid="stMetricValue"] { font-size: 28px !important; color: #0f172a !important; font-weight: 700 !important; }
 
-    /* Tab Label Typography with Subtle Slate Accent */
+    /* Tab Label Typography with Complementary Lighter Blue Accent */
     .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-        color: #1e293b !important; 
-        border-bottom-color: #1e293b !important; 
+        color: #2563eb !important; 
+        border-bottom-color: #2563eb !important; 
         font-weight: 700;
         font-size: 18px !important;
     }
@@ -159,7 +159,7 @@ if 'db_data' not in st.session_state:
 
 df_db = pd.DataFrame(st.session_state.db_data)
 
-# Header Banner with the custom midnight blue styling
+# Header Banner with pure white text matching the midnight blue gradient
 st.markdown("""
     <div class="stratix-header">
         <h1>⚡ Stratix</h1>
@@ -222,7 +222,7 @@ with tab1:
     col_strat1, col_strat2 = st.columns(2)
     with col_strat1:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #1e293b; height: 100%;">
+            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #3b82f6; height: 100%;">
                 <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">🎯 Recommended GTM Strategy</h3>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Optimal Framework:</b><br>{account_row['Optimal_Strategy']}</p>
                 <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Corporate Domain:</b> <code>{account_row['Domain']}</code></p>
@@ -234,7 +234,7 @@ with tab1:
         
     with col_strat2:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #1e293b; height: 100%;">
+            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #3b82f6; height: 100%;">
                 <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">✉️ Tailored B2B Sales Outreach Email</h3>
         """, unsafe_allow_html=True)
         
