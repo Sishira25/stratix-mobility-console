@@ -1,5 +1,7 @@
 # Stratix | Enterprise Mobility & GTM Intelligence Console
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://stratix-mobility-console.streamlit.app/)
+
 **Stratix** is a high-performance, production-ready web application built for B2B enterprise sales teams, account executives, and sales operations. It automates the heavy lifting of enterprise account research—calculating mobile device density, auditing IT infrastructure, and generating tailored go-to-market (GTM) strategies and executive sales pitches in seconds.
 
 ---
