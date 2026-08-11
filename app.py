@@ -8,56 +8,70 @@ st.set_page_config(
     layout="wide"
 )
 
-# Professional Trust Blue & Slate Styling with Scaled Typography
+# Custom Deep Midnight Blue & Luminous Accent Styling Inspired by the Image
 st.markdown("""
     <style>
-    .stApp { background-color: #f8fafc; }
-    
-    /* Global Base Font Override - 18px for Maximum Readability */
-    html, body, [class*="css"] {
-        font-size: 18px !important;
-        color: #1e293b !important;
+    /* Global App Deep Midnight Background */
+    .stApp { 
+        background-color: #070d1a !important; 
     }
     
-    /* Trust Blue Header Banner Styling */
+    /* Global Base Text Override */
+    html, body, [class*="css"] {
+        font-size: 18px !important;
+        color: #e2e8f0 !important;
+    }
+    
+    /* Header Banner Styling - Deep Midnight with Luminous Glow */
     .stratix-header {
-        background-color: #1e293b;
+        background: linear-gradient(135deg, #0b132b 0%, #111c3a 100%);
         padding: 2.5rem 3rem;
         border-radius: 10px;
         color: white;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-        border-left: 6px solid #2563eb;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        border-left: 6px solid #3b82f6;
+        border-right: 1px solid rgba(59, 130, 246, 0.2);
+        border-top: 1px solid rgba(59, 130, 246, 0.2);
+        border-bottom: 1px solid rgba(59, 130, 246, 0.2);
     }
     .stratix-header h1 { 
-        color: white !important; 
+        color: #ffffff !important; 
         font-size: 36px !important; 
         font-weight: 700 !important; 
         margin-bottom: 8px !important; 
     }
     .stratix-header p { 
-        color: #94a3b8 !important; 
+        color: #93c5fd !important; 
         font-size: 19px !important; 
         margin: 0px !important; 
     }
     
     /* Section & Subheader Scaling */
-    h2 { font-size: 24px !important; color: #0f172a !important; font-weight: 700; margin-top: 1.2rem; }
-    h3 { font-size: 20px !important; color: #0f172a !important; font-weight: 700; }
+    h2 { font-size: 24px !important; color: #f8fafc !important; font-weight: 700; margin-top: 1.2rem; }
+    h3 { font-size: 20px !important; color: #f8fafc !important; font-weight: 700; }
     
     /* Form Labels and Inputs */
     label, .stTextInput label, .stSelectbox label, .stNumberInput label, .stFileUploader label {
         font-size: 18px !important;
         font-weight: 600 !important;
-        color: #0f172a !important;
+        color: #cbd5e1 !important;
     }
     input, select, div[data-baseweb="select"] span {
         font-size: 18px !important;
+        color: #ffffff !important;
+        background-color: #0b132b !important;
     }
     
+    /* Selectbox dropdown container fix for dark mode */
+    div[data-baseweb="select"] > div {
+        background-color: #0b132b !important;
+        border-color: #1e3a8a !important;
+    }
+
     /* Primary Electric Blue Action Buttons */
     .stButton>button {
-        background-color: #2563eb !important; 
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; 
         color: white !important; 
         border-radius: 6px; 
         font-weight: 600; 
@@ -65,36 +79,36 @@ st.markdown("""
         border: none; 
         padding: 0.8rem 1.4rem; 
         width: 100%; 
-        box-shadow: 0 2px 4px rgba(37,99,235,0.2);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
     }
     .stButton>button:hover { 
-        background-color: #1d4ed8 !important; 
+        background: linear-gradient(135deg, #1d4ed8 100%, #1e40af 0%) !important; 
         color: white !important; 
     }
     
-    /* Metric Cards Overhaul */
+    /* Metric Cards Overhaul - Dark Glassmorphism */
     div[data-testid="stMetric"] {
-        background-color: #ffffff; 
+        background-color: #0b132b; 
         padding: 20px; 
         border-radius: 8px; 
-        border: 1px solid #e2e8f0; 
-        border-top: 4px solid #2563eb; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        border: 1px solid #1e3a8a; 
+        border-top: 4px solid #3b82f6; 
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
-    div[data-testid="stMetricLabel"] { font-size: 16px !important; color: #64748b !important; font-weight: 600 !important; }
-    div[data-testid="stMetricValue"] { font-size: 28px !important; color: #0f172a !important; font-weight: 700 !important; }
+    div[data-testid="stMetricLabel"] { font-size: 16px !important; color: #93c5fd !important; font-weight: 600 !important; }
+    div[data-testid="stMetricValue"] { font-size: 28px !important; color: #ffffff !important; font-weight: 700 !important; }
 
     /* Tab Label Typography */
     .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-        color: #2563eb !important; 
-        border-bottom-color: #2563eb !important; 
+        color: #60a5fa !important; 
+        border-bottom-color: #3b82f6 !important; 
         font-weight: 700;
         font-size: 18px !important;
     }
     .stTabs [data-baseweb="tab-list"] button {
         font-size: 18px !important;
         font-weight: 600 !important;
-        color: #475569 !important;
+        color: #94a3b8 !important;
     }
     
     /* Dataframe Table Text Scaling */
@@ -219,20 +233,20 @@ with tab1:
     col_strat1, col_strat2 = st.columns(2)
     with col_strat1:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #2563eb; height: 100%;">
-                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">🎯 Recommended GTM Strategy</h3>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Optimal Framework:</b><br>{account_row['Optimal_Strategy']}</p>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Corporate Domain:</b> <code>{account_row['Domain']}</code></p>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Current MDM Integration:</b> <code>{account_row['Current_MDM']}</code></p>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Hardware Lock-in Status:</b> <code>{'Yes — BARB Eligible (CapEx Relief)' if account_row['Legacy_Lockin'] else 'No — Standard DaaS/CYOD'}</code></p>
-                <p style="margin-bottom: 0px; font-size: 18px !important;"><b>Ecosystem Partner Stack:</b> <code>{account_row['Partner_Stack']}</code></p>
+            <div style="background-color: #0b132b; padding: 24px; border-radius: 8px; border: 1px solid #1e3a8a; border-top: 4px solid #3b82f6; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important; color: #ffffff !important;">🎯 Recommended GTM Strategy</h3>
+                <p style="margin-bottom: 14px; font-size: 18px !important; color: #cbd5e1 !important;"><b>Optimal Framework:</b><br>{account_row['Optimal_Strategy']}</p>
+                <p style="margin-bottom: 14px; font-size: 18px !important; color: #cbd5e1 !important;"><b>Corporate Domain:</b> <code style="color: #60a5fa; background: #070d1a; padding: 2px 6px; border-radius: 4px;">{account_row['Domain']}</code></p>
+                <p style="margin-bottom: 14px; font-size: 18px !important; color: #cbd5e1 !important;"><b>Current MDM Integration:</b> <code style="color: #60a5fa; background: #070d1a; padding: 2px 6px; border-radius: 4px;">{account_row['Current_MDM']}</code></p>
+                <p style="margin-bottom: 14px; font-size: 18px !important; color: #cbd5e1 !important;"><b>Hardware Lock-in Status:</b> <code style="color: #60a5fa; background: #070d1a; padding: 2px 6px; border-radius: 4px;">{'Yes — BARB Eligible (CapEx Relief)' if account_row['Legacy_Lockin'] else 'No — Standard DaaS/CYOD'}</code></p>
+                <p style="margin-bottom: 0px; font-size: 18px !important; color: #cbd5e1 !important;"><b>Ecosystem Partner Stack:</b> <code style="color: #60a5fa; background: #070d1a; padding: 2px 6px; border-radius: 4px;">{account_row['Partner_Stack']}</code></p>
             </div>
         """, unsafe_allow_html=True)
         
     with col_strat2:
         st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; border-top: 4px solid #2563eb; height: 100%;">
-                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">✉️ Tailored B2B Sales Outreach Email</h3>
+            <div style="background-color: #0b132b; padding: 24px; border-radius: 8px; border: 1px solid #1e3a8a; border-top: 4px solid #3b82f6; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important; color: #ffffff !important;">✉️ Tailored B2B Sales Outreach Email</h3>
         """, unsafe_allow_html=True)
         
         realistic_pitch = (
