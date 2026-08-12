@@ -197,7 +197,7 @@ with st.sidebar:
     )
     
     st.markdown("---")
-    st.markdown("**Stratix Console v3.7**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
+    st.markdown("**Stratix Console v3.8**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
 
 # Header Banner
 st.markdown("""
@@ -389,7 +389,25 @@ with tab2:
 
     db_search = st.text_input("Search Database table", "")
     display_df = df_db[df_db['Company'].str.contains(db_search, case=False)] if db_search else df_db
-    st.dataframe(display_df, use_container_width=True)
+    
+    # Fully Expanded, Non-Truncated Data Grid View
+    st.dataframe(
+        display_df, 
+        use_container_width=True,
+        column_config={
+            "Company": st.column_config.TextColumn("Company", width="medium"),
+            "Domain": st.column_config.TextColumn("Domain", width="small"),
+            "Industry": st.column_config.TextColumn("Industry Sector", width="medium"),
+            "Employees": st.column_config.NumberColumn("Employees", format="%d"),
+            "Current_MDM": st.column_config.TextColumn("Current MDM", width="medium"),
+            "Device_Density": st.column_config.NumberColumn("Density Ratio", format="%.2f"),
+            "Legacy_Lockin": st.column_config.CheckboxColumn("BARB Eligible"),
+            "Estimated_Contract_Value": st.column_config.TextColumn("Est. Contract Value", width="medium"),
+            "Optimal_Strategy": st.column_config.TextColumn("Optimal GTM Strategy Framework", width="large"),
+            "Partner_Stack": st.column_config.TextColumn("Partner Ecosystem Stack", width="medium")
+        },
+        hide_index=True
+    )
     
     csv_data = display_df.to_csv(index=False).encode('utf-8')
     st.download_button(
