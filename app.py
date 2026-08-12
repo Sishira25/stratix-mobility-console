@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Page Configuration
-st.set_page_config(
+data_config = st.set_page_config(
     page_title="Stratix | Enterprise Mobility & GTM Intelligence Console",
     page_icon="",
     layout="wide"
