@@ -133,7 +133,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- EXPANDED MASTER DATABASE ---
 # --- EXPANDED REAL-WORLD ENTERPRISE MASTER DATABASE ---
 if 'db_data' not in st.session_state:
     st.session_state.db_data = [
@@ -161,8 +160,9 @@ if 'db_data' not in st.session_state:
         {"Company": "Allianz SE", "Domain": "allianz.com", "Industry": "Finance", "Employees": 159000, "Current_MDM": "Microsoft Intune", "Device_Density": 0.75, "Legacy_Lockin": False, "Estimated_Contract_Value": "€820,000/yr", "Optimal_Strategy": "DSGVO-Compliant Secure Financial Advisory Mobile Enclave", "Partner_Stack": "Apple / Vodafone"},
         {"Company": "Deutsche Bank AG", "Domain": "db.com", "Industry": "Finance", "Employees": 85000, "Current_MDM": "MobileIron / Ivanti", "Device_Density": 0.80, "Legacy_Lockin": False, "Estimated_Contract_Value": "€550,000/yr", "Optimal_Strategy": "Secure Investment Banking CYOD & Mobile Threat Defense", "Partner_Stack": "Apple / Microsoft"}
     ]
-    
-    df_db = pd.DataFrame(st.session_state.db_data)
+
+# Ensure df_db is globally available
+df_db = pd.DataFrame(st.session_state.db_data)
 
 # Helper function for Dynamic Multi-Tier Classification
 def get_target_tier(employees):
@@ -206,21 +206,18 @@ tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database 
 with tab1:
     st.subheader("Target Account Pipeline & Global Search Engine")
     
-    # SEARCH BAR + DIRECTORY LOOKUP
     col_s1, col_s2 = st.columns([2, 1])
     with col_s1:
-        search_query = st.text_input("🔍 Enterprise Search Engine:", placeholder="Type company name (e.g., Siemens, Global Logistics)...")
+        search_query = st.text_input("🔍 Enterprise Search Engine:", placeholder="Type company name (e.g., Siemens, DHL)...")
     with col_s2:
         industry_options = ["All Industries"] + sorted(df_db["Industry"].unique().tolist())
         selected_industry = st.selectbox("Filter Directory", industry_options)
     
-    # Filter database based on industry
     filtered_db = df_db if selected_industry == "All Industries" else df_db[df_db["Industry"] == selected_industry]
     
     matched_account = None
     is_from_db = True
 
-    # Real-time search logic (Google / ZoomInfo style exact/partial lookup)
     if search_query.strip():
         q = search_query.strip().lower()
         exact_match = filtered_db[filtered_db["Company"].str.lower() == q]
@@ -231,22 +228,18 @@ with tab1:
         elif not partial_match.empty:
             matched_account = partial_match.iloc[0].copy()
         else:
-            is_from_db = False # Not found in database!
+            is_from_db = False
     else:
-        # Standard Selectbox fallback if search is empty
         selected_company = st.selectbox("Or Select Enterprise from Directory", filtered_db["Company"].tolist() if not filtered_db.empty else ["No accounts available"])
         match = df_db[df_db["Company"].str.lower() == selected_company.lower()]
         matched_account = match.iloc[0].copy() if not match.empty else df_db.iloc[0].copy()
 
-    # HANDLE NOT FOUND (Professional Error Handling instead of silent hallucination)
     if not is_from_db:
         st.warning(f"⚠️ **No indexed account found for '{search_query}' in the Stratix Master Database.**")
-        st.info("💡 **Pro-Tip:** You can quickly add this company to your pipeline database using the **Master Database & CRM Upload** tab, or select an existing enterprise below.")
-        
-        # Fallback display to default first row so the app doesn't crash or show blank
+        st.info("💡 **Pro-Tip:** You can quickly add this company to your pipeline database using the **Master Database & CRM Upload** tab.")
         matched_account = df_db.iloc[0].copy()
         st.markdown("---")
-        st.markdown("### 📊 Displaying Default View (`" + matched_account["Company"] + "` as reference):")
+        st.markdown(f"### 📊 Displaying Default View (`{matched_account['Company']}` as reference):")
 
     matched_account["Device_Density"] = global_density_modifier
     calculated_fleet = int(matched_account["Employees"] * matched_account["Device_Density"])
@@ -263,230 +256,3 @@ with tab1:
         st.metric("Target Tier", dynamic_tier)
     with col_m4:
         st.metric("Est. Annual Contract Value", matched_account["Estimated_Contract_Value"])
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    col_strat1, col_strat2 = st.columns(2)
-    with col_strat1:
-        st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%; box-shadow: 0 4px 12px rgba(0,7,93,0.04);">
-                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">Recommended GTM Strategy</h3>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Optimal Framework:</b><br>{matched_account['Optimal_Strategy']}</p>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Corporate Domain:</b> <code>{matched_account['Domain']}</code></p>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Current MDM Integration:</b> <code>{matched_account['Current_MDM']}</code></p>
-                <p style="margin-bottom: 14px; font-size: 18px !important;"><b>Hardware Lock-in Status:</b> <code>{'Yes — BARB Eligible (CapEx Relief)' if matched_account['Legacy_Lockin'] else 'No — Standard DaaS/CYOD'}</code></p>
-                <p style="margin-bottom: 0px; font-size: 18px !important;"><b>Ecosystem Partner Stack:</b> <code>{matched_account['Partner_Stack']}</code></p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-    with col_strat2:
-        st.markdown(f"""
-            <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%; box-shadow: 0 4px 12px rgba(0,7,93,0.04);">
-                <h3 style="margin-top: 0px; margin-bottom: 15px; font-size: 20px !important;">Tailored B2B Sales Outreach Email</h3>
-        """, unsafe_allow_html=True)
-        
-        realistic_pitch = (
-            f"Subject: Streamlining corporate mobile lifecycle at {matched_account['Company']}\n\n"
-            f"Hi [First Name],\n\n"
-            f"Managing a mobile fleet of ~{calculated_fleet} devices integrated with {matched_account['Current_MDM']} "
-            f"often creates heavy administrative overhead for IT teams—from procurement and staging to handling device swaps and secure end-of-life data erasure.\n\n"
-            f"Our Device-as-a-Service (DaaS) platform helps enterprise IT leaders transition smoothly. "
-            f"Given your infrastructure, utilizing our **{matched_account['Optimal_Strategy']}** allows {matched_account['Company']} "
-            f"to unlock immediate balance sheet relief (via Buy-and-Rent-Back) while guaranteeing zero-downtime migration.\n\n"
-            f"Would you be open to a brief 10-minute introductory call next Tuesday to review a custom fleet migration blueprint?\n\n"
-            f"Best regards,\n"
-            f"[Your Name] | Enterprise Business Development"
-        )
-        st.code(realistic_pitch, language="text")
-        
-        st.download_button(
-            label="Download Pitch as Text File",
-            data=realistic_pitch,
-            file_name=f"{matched_account['Company'].lower().replace(' ', '_')}_pitch.txt",
-            mime="text/plain"
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-with tab2:
-    st.subheader("Master Enterprise Database & CRM Ingestion")
-    
-    col_db_metrics1, col_db_metrics2 = st.columns(2)
-    with col_db_metrics1:
-        st.metric("Total Indexed Accounts", len(df_db))
-    with col_db_metrics2:
-        st.metric("Industries Covered", df_db["Industry"].nunique())
-        
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### Salesforce / HubSpot CRM Export Ingestion")
-    uploaded_file = st.file_uploader("Drop your CRM account export (.csv or .xlsx) here", type=["csv", "xlsx"])
-    if uploaded_file is not None:
-        try:
-            if uploaded_file.name.endswith('.csv'):
-                upload_df = pd.read_csv(uploaded_file)
-            else:
-                upload_df = pd.read_excel(uploaded_file)
-            
-            if 'Company' in upload_df.columns:
-                for _, row in upload_df.iterrows():
-                    new_rec = {
-                        "Company": str(row.get('Company', 'Unknown')),
-                        "Domain": str(row.get('Domain', 'company.de')),
-                        "Industry": str(row.get('Industry', 'Enterprise')),
-                        "Employees": int(row.get('Employees', 1000)),
-                        "Current_MDM": str(row.get('Current_MDM', 'Microsoft Intune')),
-                        "Device_Density": 0.50,
-                        "Legacy_Lockin": True,
-                        "Estimated_Contract_Value": "€100,000/yr",
-                        "Optimal_Strategy": "Automated Fleet Migration (AFM) via BARB",
-                        "Partner_Stack": "Samsung / T-Mobile"
-                    }
-                    if not any(d['Company'].lower() == new_rec['Company'].lower() for d in st.session_state.db_data):
-                        st.session_state.db_data.append(new_rec)
-                st.success(f"Successfully processed CRM batch export from `{uploaded_file.name}`!")
-            else:
-                st.error("Uploaded file must contain a 'Company' column.")
-        except Exception as e:
-            st.error(f"Error processing file: {e}")
-
-    db_search = st.text_input("Search Database table", "")
-    display_df = df_db[df_db['Company'].str.contains(db_search, case=False)] if db_search else df_db
-    st.dataframe(display_df, use_container_width=True)
-    
-    csv_data = display_df.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="Download Filtered Pipeline Database as CSV",
-        data=csv_data,
-        file_name="stratix_pipeline_export.csv",
-        mime="text/csv"
-    )
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### Pipeline Analytics by Industry")
-    industry_summary = df_db.groupby("Industry")["Employees"].sum().reset_index()
-    st.bar_chart(industry_summary.set_index("Industry"))
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### Append Single Target Account")
-    with st.form("add_account_form"):
-        c_name = st.text_input("Company Name")
-        c_dom = st.text_input("Domain")
-        c_ind = st.selectbox("Industry", ["Logistics", "Finance", "Manufacturing", "Healthcare", "Retail", "Tech/SaaS", "Energy/Utilities", "Professional Services", "Public Sector", "Telecommunications"])
-        c_emp = st.number_input("Employees", min_value=10, value=1500)
-        c_mdm = st.selectbox("MDM Tool", ["Microsoft Intune", "MobileIron / Ivanti", "Jamf", "Mobile Device Manager Plus"])
-        submitted = st.form_submit_button("Index Account to Pipeline Database")
-        if submitted and c_name:
-            new_record = {
-                "Company": c_name, "Domain": c_dom if c_dom else f"{c_name.lower().replace(' ', '')}.de",
-                "Industry": c_ind, "Employees": c_emp, "Current_MDM": c_mdm, "Device_Density": 0.50,
-                "Legacy_Lockin": True, "Estimated_Contract_Value": f"€{int(c_emp * 40):,}/yr",
-                "Optimal_Strategy": "Automated Fleet Migration (AFM) via BARB", "Partner_Stack": "Samsung / T-Mobile"
-            }
-            st.session_state.db_data.append(new_record)
-            st.success(f"Successfully recorded {c_name} into pipeline database.")
-
-with tab3:
-    st.subheader("Enterprise Ecosystem & Strategic Playbooks")
-    st.markdown("Select a hardware or security partner ecosystem below to view specific channel margins, integration specs, and co-selling frameworks.")
-    
-    selected_partner = st.selectbox(
-        "Select Ecosystem Partner",
-        ["Samsung Knox & Enterprise", "Apple iOS & DEP Deployment", "Zebra Technologies (Ruggedized)", "Microsoft Surface & Intune Stack"]
-    )
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    col_p1, col_p2 = st.columns(2)
-    
-    if selected_partner == "Samsung Knox & Enterprise":
-        with col_p1:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Knox Integration & Staging</h3>
-                    <p><b>Deployment Method:</b> Knox Mobile Enrollment (KME)</p>
-                    <p><b>Security Tier:</b> Hardware-backed root of trust with Knox Guard isolation.</p>
-                    <p><b>Target Vertical:</b> Manufacturing, Logistics, Field Healthcare.</p>
-                </div>
-            """, unsafe_allow_html=True)
-        with col_p2:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Commercial & Channel Incentives</h3>
-                    <p><b>Partner Margin Tier:</b> Tier 1 Authorized DaaS Distributor</p>
-                    <p><b>Buy-and-Rent-Back Eligibility:</b> Full residual value guarantee on Galaxy Enterprise Editions.</p>
-                    <p><b>Data Wipe Certification:</b> Integrated Blancco automated audit logging.</p>
-                </div>
-            """, unsafe_allow_html=True)
-            
-    elif selected_partner == "Apple iOS & DEP Deployment":
-        with col_p1:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Apple Ecosystem & DEP Setup</h3>
-                    <p><b>Deployment Method:</b> Automated Device Enrollment via Apple Business Manager (ABM).</p>
-                    <p><b>Security Tier:</b> Supervised mode, mandatory MDM profile retention.</p>
-                    <p><b>Target Vertical:</b> Finance, Tech/SaaS, Professional Services.</p>
-                </div>
-            """, unsafe_allow_html=True)
-        with col_p2:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Commercial & Channel Incentives</h3>
-                    <p><b>Partner Margin Tier:</b> Apple Authorized Enterprise Reseller (AAER)</p>
-                    <p><b>Buy-and-Rent-Back Eligibility:</b> High resale valuation retention across iPhone & iPad Pro portfolios.</p>
-                    <p><b>Lifecycle Option:</b> 24-month upgrade cycles with zero-touch swap logistics.</p>
-                </div>
-            """, unsafe_allow_html=True)
-            
-    elif selected_partner == "Zebra Technologies (Ruggedized)":
-        with col_p1:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Ruggedized Handheld Staging</h3>
-                    <p><b>Deployment Method:</b> StageNow Enterprise Barcode Provisioning.</p>
-                    <p><b>Security Tier:</b> Enterprise Mobility Security Suite with LifeGuard OTA updates.</p>
-                    <p><b>Target Vertical:</b> Warehousing, Freight Logistics, Omnichannel Retail.</p>
-                </div>
-            """, unsafe_allow_html=True)
-        with col_p2:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Commercial & Channel Incentives</h3>
-                    <p><b>Partner Margin Tier:</b> Zebra Premier Solution Partner</p>
-                    <p><b>Buy-and-Rent-Back Eligibility:</b> Heavy-duty asset lifecycle structuring for multi-year warehouse contracts.</p>
-                    <p><b>Swap Logistics:</b> 24-hour advance replacement SLA for broken barcode terminals.</p>
-                </div>
-            """, unsafe_allow_html=True)
-            
-    else:
-        with col_p1:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Microsoft Surface & Intune Integration</h3>
-                    <p><b>Deployment Method:</b> Windows Autopilot native cloud enrollment.</p>
-                    <p><b>Security Tier:</b> Microsoft Entra ID (Azure AD) conditional access policies.</p>
-                    <p><b>Target Vertical:</b> Corporate Headquarters, Public Sector, Enterprise IT.</p>
-                </div>
-            """, unsafe_allow_html=True)
-        with col_p2:
-            st.markdown("""
-                <div style="background-color: white; padding: 24px; border-radius: 10px; border: 1px solid #e2e8f0; border-top: 4px solid #00075D; height: 100%;">
-                    <h3>Commercial & Channel Incentives</h3>
-                    <p><b>Partner Margin Tier:</b> Microsoft Cloud Solution Provider (CSP)</p>
-                    <p><b>Buy-and-Rent-Back Eligibility:</b> Balance sheet capitalization relief for laptop & tablet fleets.</p>
-                    <p><b>Compliance:</b> ISO 27001 & BSI-compliant secure workspace provisioning.</p>
-                </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    partner_playbook_text = (
-        f"STRATIX PARTNER ECOSYSTEM PLAYBOOK\n"
-        f"Ecosystem Focus: {selected_partner}\n"
-        f"Compliance Framework: ISO 27001 Certified, GDPR & NIS-2 Compliant, Blancco Data Erasure Audit Trail."
-    )
-    st.download_button(
-        label="Download Selected Partner Playbook (.txt)",
-        data=partner_playbook_text,
-        file_name=f"{selected_partner.lower().replace(' ', '_')}_playbook.txt",
-        mime="text/plain"
-    )
