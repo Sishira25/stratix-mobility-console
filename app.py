@@ -211,7 +211,7 @@ with st.sidebar:
     )
     
     st.markdown("---")
-    st.markdown("**Stratix Console v2.8**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
+    st.markdown("**Stratix Console v2.9**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
 
 # Header Banner
 st.markdown("""
@@ -227,39 +227,47 @@ tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database 
 with tab1:
     st.subheader("Target Account Pipeline & Global Search Engine")
     
-    # GOOGLE-STYLE GLOBAL SEARCH BAR (Lookup any company worldwide instantly)
-    search_query = st.text_input("🔍 Global Enterprise Search (Type any company name to look up instantly...)", placeholder="e.g. Siemens, Allianz, Lufthansa, or any custom target...")
+    # SEARCH BAR + DIRECTORY LOOKUP
+    col_s1, col_s2 = st.columns([2, 1])
+    with col_s1:
+        search_query = st.text_input("🔍 Enterprise Search Engine:", placeholder="Type company name (e.g., Siemens, Global Logistics)...")
+    with col_s2:
+        industry_options = ["All Industries"] + sorted(df_db["Industry"].unique().tolist())
+        selected_industry = st.selectbox("Filter Directory", industry_options)
     
-    # Real-time search logic matching the database or synthesizing on the fly
+    # Filter database based on industry
+    filtered_db = df_db if selected_industry == "All Industries" else df_db[df_db["Industry"] == selected_industry]
+    
     matched_account = None
+    is_from_db = True
+
+    # Real-time search logic (Google / ZoomInfo style exact/partial lookup)
     if search_query.strip():
-        query_cleaned = search_query.strip().lower()
-        exact_match = df_db[df_db["Company"].str.lower() == query_cleaned]
-        partial_match = df_db[df_db["Company"].str.lower().str.contains(query_cleaned, na=False)]
+        q = search_query.strip().lower()
+        exact_match = filtered_db[filtered_db["Company"].str.lower() == q]
+        partial_match = filtered_db[filtered_db["Company"].str.lower().str.contains(q, na=False)]
         
         if not exact_match.empty:
             matched_account = exact_match.iloc[0].copy()
         elif not partial_match.empty:
             matched_account = partial_match.iloc[0].copy()
         else:
-            # Dynamic AI/Heuristic Synthesis for unknown searched companies (Production-ready feel)
-            matched_account = {
-                "Company": search_query.strip(),
-                "Domain": f"{search_query.strip().lower().replace(' ', '')}.de",
-                "Industry": "Enterprise / Tech",
-                "Employees": 3200,
-                "Current_MDM": "Microsoft Intune",
-                "Device_Density": global_density_modifier,
-                "Legacy_Lockin": True,
-                "Estimated_Contract_Value": "€145,000/yr",
-                "Optimal_Strategy": "Automated Fleet Migration (AFM) via BARB & Zero-Touch Deployment",
-                "Partner_Stack": "Samsung / T-Mobile"
-            }
+            is_from_db = False # Not found in database!
     else:
-        # Fallback to database selectbox if search is empty
-        selected_company = st.selectbox("Or Select Enterprise from Database Directory", df_db["Company"].tolist())
+        # Standard Selectbox fallback if search is empty
+        selected_company = st.selectbox("Or Select Enterprise from Directory", filtered_db["Company"].tolist() if not filtered_db.empty else ["No accounts available"])
         match = df_db[df_db["Company"].str.lower() == selected_company.lower()]
         matched_account = match.iloc[0].copy() if not match.empty else df_db.iloc[0].copy()
+
+    # HANDLE NOT FOUND (Professional Error Handling instead of silent hallucination)
+    if not is_from_db:
+        st.warning(f"⚠️ **No indexed account found for '{search_query}' in the Stratix Master Database.**")
+        st.info("💡 **Pro-Tip:** You can quickly add this company to your pipeline database using the **Master Database & CRM Upload** tab, or select an existing enterprise below.")
+        
+        # Fallback display to default first row so the app doesn't crash or show blank
+        matched_account = df_db.iloc[0].copy()
+        st.markdown("---")
+        st.markdown("### 📊 Displaying Default View (`" + matched_account["Company"] + "` as reference):")
 
     matched_account["Device_Density"] = global_density_modifier
     calculated_fleet = int(matched_account["Employees"] * matched_account["Device_Density"])
