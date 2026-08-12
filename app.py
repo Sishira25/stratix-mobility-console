@@ -216,44 +216,43 @@ tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database 
 with tab1:
     st.subheader("Target Account Pipeline & Instant Lookup")
     
-    # Real-time Search Box for dynamic lookup
-    search_input = st.text_input("Search / Lookup Target Company Name (e.g., 'GmbH', 'Logistics', 'Bavaria'):", "")
+    # TRUE INSTANT LOOKUP SEARCH BAR
+    search_query = st.text_input("🔍 Global Account Lookup (Type company name to search instantly):", "")
     
-    # Filter database based on search query or selectbox
-    if search_input.strip():
-        search_results = df_db[df_db["Company"].str.contains(search_input, case=False, na=False)]
-        company_list = search_results["Company"].tolist() if not search_results.empty else ["No matching accounts"]
-    else:
-        company_list = df_db["Company"].tolist()
-
     col_f1, col_f2 = st.columns(2)
     with col_f1:
         industry_options = ["All"] + sorted(df_db["Industry"].unique().tolist())
         selected_industry = st.selectbox("Filter by Industry Vertical", industry_options)
     
+    filtered_df = df_db if selected_industry == "All" else df_db[df_db["Industry"] == selected_industry]
+    
     with col_f2:
-        selected_company = st.selectbox("Select Enterprise from Database", company_list)
+        selected_company = st.selectbox("Or Select Enterprise from Database", filtered_df["Company"].tolist())
     
-    target_name = selected_company if selected_company != "No matching accounts" else search_input
-    
-    match = df_db[df_db["Company"].str.lower() == target_name.lower()]
-    
-    if not match.empty:
-        account_row = match.iloc[0].copy()
-        account_row["Device_Density"] = global_density_modifier
+    # Real-time search logic: if user types in search box, it overrides the dropdown lookup
+    if search_query.strip():
+        search_match = df_db[df_db["Company"].str.contains(search_query, case=False, na=False)]
+        if not search_match.empty:
+            account_row = search_match.iloc[0].copy()
+        else:
+            # Dynamic fallback if searching a brand new company name
+            account_row = {
+                "Company": search_query.strip(),
+                "Domain": f"{search_query.strip().lower().replace(' ', '')}.de",
+                "Industry": selected_industry if selected_industry != "All" else "Enterprise",
+                "Employees": 2000,
+                "Current_MDM": "Microsoft Intune",
+                "Device_Density": global_density_modifier,
+                "Legacy_Lockin": True,
+                "Estimated_Contract_Value": "€130,000/yr",
+                "Optimal_Strategy": "Automated Fleet Migration (AFM) via BARB & Zero-Touch Deployment",
+                "Partner_Stack": "Samsung / T-Mobile"
+            }
     else:
-        account_row = {
-            "Company": target_name,
-            "Domain": f"{target_name.lower().replace(' ', '')}.de",
-            "Industry": selected_industry if selected_industry != "All" else "Manufacturing/Enterprise",
-            "Employees": 1500,
-            "Current_MDM": "Microsoft Intune",
-            "Device_Density": global_density_modifier,
-            "Legacy_Lockin": True,
-            "Estimated_Contract_Value": "€120,000/yr",
-            "Optimal_Strategy": "Automated Fleet Migration (AFM) via BARB & Zero-Touch Deployment",
-            "Partner_Stack": "Samsung / T-Mobile"
-        }
+        match = df_db[df_db["Company"].str.lower() == selected_company.lower()]
+        account_row = match.iloc[0].copy() if not match.empty else df_db.iloc[0].copy()
+
+    account_row["Device_Density"] = global_density_modifier
     
     st.markdown("<br>", unsafe_allow_html=True)
     calculated_fleet = int(account_row["Employees"] * account_row["Device_Density"])
