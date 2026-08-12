@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling: Enterprise Sidebar, Pill Tabs, Dark Navy Blue (#00075D) Theme with Fixed Metric Text Clipping
+# Custom Styling: Enterprise Sidebar, Pill Tabs, Dark Navy Blue (#00075D) Theme with Unbreakable Metrics
 st.markdown("""
     <style>
     .stApp { background-color: #f8fafc; }
@@ -73,29 +73,32 @@ st.markdown("""
         color: white !important; 
     }
     
-    /* Refined Metric Cards with Expanded Width to Prevent Text Truncation */
-    div[data-testid="stMetric"] {
-        background-color: #ffffff; 
-        padding: 18px 14px; 
-        border-radius: 10px; 
-        border: 1px solid #e2e8f0; 
-        border-top: 4px solid #00075D; 
+    /* Custom HTML Metric Cards to Guarantee Full Visibility Without Truncation */
+    .custom-metric-card {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        border-top: 4px solid #00075D;
         box-shadow: 0 4px 12px rgba(0,7,93,0.04);
-        overflow: visible !important;
+        height: 110px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
-    div[data-testid="stMetricLabel"] { 
-        font-size: 14px !important; 
-        color: #64748b !important; 
-        font-weight: 600 !important; 
-        letter-spacing: 0.2px;
-        white-space: normal !important;
+    .custom-metric-label {
+        font-size: 14px !important;
+        color: #64748b !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 6px;
     }
-    div[data-testid="stMetricValue"] { 
-        font-size: 20px !important; 
-        color: #00075D !important; 
-        font-weight: 700 !important; 
-        white-space: normal !important;
-        word-break: break-word !important;
+    .custom-metric-value {
+        font-size: 18px !important;
+        color: #00075D !important;
+        font-weight: 700 !important;
+        line-height: 1.2;
     }
 
     /* Modern Pill / Card Tab Separation */
@@ -187,7 +190,7 @@ with st.sidebar:
     )
     
     st.markdown("---")
-    st.markdown("**Stratix Console v3.2**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
+    st.markdown("**Stratix Console v3.4**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
 
 # Header Banner
 st.markdown("""
@@ -201,55 +204,28 @@ st.markdown("""
 tab1, tab2, tab3 = st.tabs(["Account Intelligence & Outreach", "Master Database & CRM Upload", "Partner Ecosystem & Strategy"])
 
 with tab1:
-    st.subheader("Target Account Pipeline & Global Search Engine")
+    st.subheader("Target Account Pipeline & Enterprise Directory")
     
     col_s1, col_s2 = st.columns([2, 1])
-    with col_s1:
-        search_query = st.text_input("🔍 Enterprise Search Engine:", placeholder="Type any company worldwide (e.g. Siemens, Allianz, Airbus)...")
     with col_s2:
         industry_options = ["All Industries"] + sorted(df_db["Industry"].unique().tolist())
         selected_industry = st.selectbox("Filter Directory by Sector", industry_options)
     
+    # Filter database based on sector
     filtered_db = df_db if selected_industry == "All Industries" else df_db[df_db["Industry"] == selected_industry]
+    company_list = sorted(filtered_db["Company"].tolist()) if not filtered_db.empty else ["No accounts available"]
     
-    matched_account = None
-    is_from_db = True
-
-    if search_query.strip():
-        q = search_query.strip().lower()
-        exact_match = filtered_db[filtered_db["Company"].str.lower() == q]
-        partial_match = filtered_db[filtered_db["Company"].str.lower().str.contains(q, na=False)]
-        
-        if not exact_match.empty:
-            matched_account = exact_match.iloc[0].copy()
-        elif not partial_match.empty:
-            matched_account = partial_match.iloc[0].copy()
-        else:
-            is_from_db = False
-    else:
-        selected_company = st.selectbox("Or Select Enterprise from Directory", filtered_db["Company"].tolist() if not filtered_db.empty else ["No accounts available"])
-        match = df_db[df_db["Company"].str.lower() == selected_company.lower()]
-        matched_account = match.iloc[0].copy() if not match.empty else df_db.iloc[0].copy()
-
-    # PROFESSIONAL ERROR HANDLING WITH LIVE API SIMULATION
-    if not is_from_db:
-        with st.spinner(f"🌐 Querying global firmographic database for '{search_query}'..."):
-            time.sleep(0.5)
-        
-        st.warning(f"⚠️ **Exact match not found in local index for '{search_query}'.** Dynamically synthesized a synthetic enterprise profile below based on sector heuristics.")
-        
-        matched_account = {
-            "Company": search_query.strip().title(),
-            "Domain": f"{search_query.strip().lower().replace(' ', '')}.de",
-            "Industry": selected_industry if selected_industry != "All Industries" else "Industrial Manufacturing",
-            "Employees": 4200,
-            "Current_MDM": "Microsoft Intune",
-            "Device_Density": global_density_modifier,
-            "Legacy_Lockin": True,
-            "Estimated_Contract_Value": "€160,000/yr",
-            "Optimal_Strategy": "Automated Fleet Migration (AFM) via BARB & Zero-Touch Deployment",
-            "Partner_Stack": "Samsung / T-Mobile"
-        }
+    with col_s1:
+        # Strict Database Selectbox (Guarantees users can ONLY search/select from existing records)
+        selected_company = st.selectbox(
+            "🔍 Enterprise Directory Lookup (Select or type to filter):", 
+            company_list,
+            help="Type or select a company from your verified database."
+        )
+    
+    # Fetch exact matching account from database
+    match = df_db[df_db["Company"].str.lower() == selected_company.lower()]
+    matched_account = match.iloc[0].copy() if not match.empty else df_db.iloc[0].copy()
 
     matched_account["Device_Density"] = global_density_modifier
     calculated_fleet = int(matched_account["Employees"] * matched_account["Device_Density"])
@@ -257,15 +233,36 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
+    # Custom HTML Metric Cards to prevent any text truncation
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
     with col_m1:
-        st.metric("Total Headcount", f"{matched_account['Employees']:,}")
+        st.markdown(f"""
+            <div class="custom-metric-card">
+                <div class="custom-metric-label">Total Headcount</div>
+                <div class="custom-metric-value">{matched_account['Employees']:,}</div>
+            </div>
+        """, unsafe_allow_html=True)
     with col_m2:
-        st.metric("Estimated Mobile Fleet", f"{calculated_fleet:,} Devices")
+        st.markdown(f"""
+            <div class="custom-metric-card">
+                <div class="custom-metric-label">Estimated Mobile Fleet</div>
+                <div class="custom-metric-value">{calculated_fleet:,} Devices</div>
+            </div>
+        """, unsafe_allow_html=True)
     with col_m3:
-        st.metric("Target Tier", dynamic_tier)
+        st.markdown(f"""
+            <div class="custom-metric-card">
+                <div class="custom-metric-label">Target Tier</div>
+                <div class="custom-metric-value">{dynamic_tier}</div>
+            </div>
+        """, unsafe_allow_html=True)
     with col_m4:
-        st.metric("Est. Annual Contract Value", matched_account["Estimated_Contract_Value"])
+        st.markdown(f"""
+            <div class="custom-metric-card">
+                <div class="custom-metric-label">Est. Annual Contract Value</div>
+                <div class="custom-metric-value">{matched_account['Estimated_Contract_Value']}</div>
+            </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     
