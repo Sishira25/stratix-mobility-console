@@ -81,7 +81,7 @@ st.markdown("""
         border: 1px solid #e2e8f0;
         border-top: 4px solid #00075D;
         box-shadow: 0 4px 12px rgba(0,7,93,0.04);
-        height: 110px;
+        height: 120px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -99,6 +99,7 @@ st.markdown("""
         color: #00075D !important;
         font-weight: 700 !important;
         line-height: 1.2;
+        word-break: break-word;
     }
 
     /* Modern Pill / Card Tab Separation */
@@ -190,7 +191,7 @@ with st.sidebar:
     )
     
     st.markdown("---")
-    st.markdown("**Stratix Console v3.5**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
+    st.markdown("**Stratix Console v3.6**<br>Enterprise GTM Infrastructure", unsafe_allow_html=True)
 
 # Header Banner
 st.markdown("""
@@ -207,15 +208,17 @@ with tab1:
     st.subheader("Target Account Pipeline & Global Search Engine")
     
     col_s1, col_s2 = st.columns([2, 1])
-    with col_s1:
-        search_query_raw = st.text_input("🔍 Enterprise Search Engine:", placeholder="Type any company worldwide (e.g. Siemens, Airbus, DHL)...")
     with col_s2:
         industry_options = ["All Industries"] + sorted(df_db["Industry"].unique().tolist())
         selected_industry = st.selectbox("Filter Directory by Sector", industry_options)
     
-    search_query = search_query_raw.strip()
-    
+    # Safely filter database by selected industry sector
     filtered_db = df_db if selected_industry == "All Industries" else df_db[df_db["Industry"] == selected_industry]
+    
+    with col_s1:
+        search_query_raw = st.text_input("🔍 Enterprise Search Engine:", placeholder="Type company name (e.g. Siemens, Airbus, DHL)...")
+    
+    search_query = search_query_raw.strip()
     
     matched_account = None
     is_from_db = True
@@ -232,7 +235,8 @@ with tab1:
         else:
             is_from_db = False
     else:
-        selected_company = st.selectbox("Or Select Enterprise from Directory", filtered_db["Company"].tolist() if not filtered_db.empty else ["No accounts available"])
+        company_choices = filtered_db["Company"].tolist() if not filtered_db.empty else df_db["Company"].tolist()
+        selected_company = st.selectbox("Or Select Enterprise from Directory", company_choices)
         match = df_db[df_db["Company"].str.lower() == selected_company.lower()]
         matched_account = match.iloc[0].copy() if not match.empty else df_db.iloc[0].copy()
 
@@ -262,7 +266,7 @@ with tab1:
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Custom HTML Metric Cards to prevent any text truncation
+    # Custom HTML Metric Cards to prevent any text truncation or overlap
     col_m1, col_m2, col_m3, col_m4 = st.columns(4)
     with col_m1:
         st.markdown(f"""
